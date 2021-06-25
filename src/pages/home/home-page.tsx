@@ -1,25 +1,23 @@
+import { useContext } from "react";
 import illustrationImg from "../../assets/images/illustration.svg";
 import logoImg from "../../assets/images/logo.svg";
 import googleIconImg from "../../assets/images/google-icon.svg";
 import { Button } from "../../components/button";
 import { useHistory } from "react-router-dom";
-import { auth, firebase } from "../../services/firebase";
+
+import { AuthContext } from "../../context";
 
 import "../../styles/auth.scss";
 
 export const Home = () => {
+  const { user, signInWithGoogle } = useContext(AuthContext);
   const history = useHistory();
 
-  const handleCreateRoom = () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-
-    auth.signInWithPopup(provider).then((result) => {
-      console.log(result);
-    });
-
-    // history.push("/rooms/new");
+  const handleCreateRoom = async () => {
+    if(!user) await signInWithGoogle();
+    
+    history.push("/rooms/new");
   };
-
 
   return (
     <div id="page-auth">
