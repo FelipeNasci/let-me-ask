@@ -1,1 +1,2 @@
-export * from "./new-room-page";
+export * from "./new-room";
+export * from "./room";
