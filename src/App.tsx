@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 import { Home } from "./pages/home";
-import { Room, NewRoom } from "./pages/room";
+import { Room, NewRoom, AdminRoom } from "./pages/room";
 
 import { AuthContextProvider } from "./context";
 
@@ -15,6 +15,7 @@ function App() {
           <Route path="/" exact component={Home} />
           <Route path="/room/new" component={NewRoom} />
           <Route path="/room/:id" component={Room} />
+          <Route path="/admin/room/:id" component={AdminRoom} />
         </Switch>
       </AuthContextProvider>
     </BrowserRouter>

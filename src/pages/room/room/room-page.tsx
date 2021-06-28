@@ -1,39 +1,18 @@
 import logoImg from "../../../assets/images/logo.svg";
 import { Button, RoomCode } from "../../../components/button";
 import { useParams } from "react-router-dom";
+import { Question } from "../../../components/question";
+
 import "../../../styles/rooms.scss";
 import { FormEvent, useState } from "react";
 import { useAuth } from "../../../hooks/useAuth";
 import { database } from "../../../services/firebase";
-import { useEffect } from "react";
+import { useRoom } from "../../../hooks";
 
 type RoomRouteParams = {
   id: string;
 };
 
-type FirebaseQuestions = Record<
-  string,
-  {
-    author: {
-      avatar: string;
-      name: string;
-    };
-    content: string;
-    isAnswered: boolean;
-    isHighlighted: boolean;
-  }
->;
-
-type Question = FirebaseQuestions & {
-  key: string;
-  author: {
-    avatar: string;
-    name: string;
-  };
-  content: string;
-  isAnswered: boolean;
-  isHighlighted: boolean;
-};
 
 export const Room = () => {
   const { user } = useAuth();
@@ -41,26 +20,7 @@ export const Room = () => {
   const roomId = params.id;
 
   const [newQuestion, setNewQuestion] = useState("");
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [title, setTitle] = useState("");
-
-  useEffect(() => {
-    const roomRef = database.ref(`rooms/${roomId}`);
-
-    roomRef.on("value", (room) => {
-      const databaseRoom = room.val();
-      const firebaseQuestions: FirebaseQuestions =
-        databaseRoom?.questions || {};
-
-      const parseQuestions = Object.keys(firebaseQuestions).map((key) => ({
-        key,
-        ...firebaseQuestions[key],
-      }));
-
-      setTitle(databaseRoom.title);
-      setQuestions(parseQuestions as Question[]);
-    });
-  }, [roomId]);
+  const { questions, title } = useRoom(roomId);
 
   const handleSendQuestion = async (event: FormEvent) => {
     event.preventDefault();
@@ -122,7 +82,9 @@ export const Room = () => {
           </div>
         </form>
 
-        {JSON.stringify(questions)}
+        {questions.map((question) => (
+          <Question {...question} />
+        ))}
       </main>
     </div>
   );
